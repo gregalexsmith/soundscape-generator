@@ -4,6 +4,10 @@ import { Icon } from 'antd';
 import './loading-state-styles.css';
 
 class LoadingState extends Component {
+    componentWillUnmount() {
+        console.log("loading state unmounting");
+    }
+
     render() {
         const { isUploading, isScanning} = this.props;
         const renderLoader = (message) => <span><Icon type="loading" /> {message}</span>

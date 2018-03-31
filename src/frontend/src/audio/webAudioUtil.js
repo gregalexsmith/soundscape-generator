@@ -7,15 +7,31 @@ const resAudio = new ResonanceAudio(ctx);
 resAudio.output.connect(ctx.destination);
 
 function webAudioUtil(context, resonanceAudioScene) {
+    const audioSources = {};
+    
+    
     return {
-        createAudioSource: (audioElement) => {
+        createAudioSource: (keyword, src) => {
+            const audioElement = document.createElement('audio');
+            audioElement.crossOrigin = "anonymous";
+            audioElement.src = src
+            // audioElement.addEventListener("ended", () => {
+            //     stopSound(keyword);
+            // });
+
             const audioElementSource = context.createMediaElementSource(audioElement);
             // connect as Resonance audio source
             const source = resonanceAudioScene.createSource();
             audioElementSource.connect(source.input);
             // Set the source position relative to the room center (source default position).
             source.setPosition();
+
+            audioSources[keyword] = {audioElement, source};
+
             return source;
+        },
+        playAudio: (keyword) => {
+            audioSources[keyword].audioElement.play()
         },
         connectToStore: (store) => {
             store.subscribe(() => {

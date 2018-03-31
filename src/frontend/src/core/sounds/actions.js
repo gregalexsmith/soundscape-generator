@@ -82,7 +82,6 @@ export function getAllSounds() {
 export function getNextSound(keyword) {
     return function (dispatch, getState) {
         const sound = getState().sounds[keyword];
-
         getSoundFromList(keyword, sound)
             .then(sound => {
                 dispatch(getSoundSuccess(keyword, sound))
@@ -92,7 +91,6 @@ export function getNextSound(keyword) {
 
 
 function getSoundFromList(keyword, sound) {
-    console.log("Get Sound from list", keyword, sound)
     const id = sound.soundList[sound.soundChoice].id
     if (!id) return;
     const url = `https://freesound.org/apiv2/sounds/${id}/`

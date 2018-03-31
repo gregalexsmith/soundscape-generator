@@ -1,10 +1,16 @@
 import React, { Component } from 'react';
 import AudioPlayer from './audio/AudioPlayer';
+import LoadingState from './image/LoadingState';
 import { connect } from 'react-redux';
 import { generalActions } from '../core/general';
 import { Button } from 'antd'
 
 class Keyword extends Component {
+
+    componentWillUnmount() {
+        console.log("result unmount");
+    }
+
     render() {
         const { keyword, sound, deleteKeyword } = this.props;
         const soundObj = sound.sound;
@@ -25,6 +31,8 @@ class Keyword extends Component {
                     <Button type="danger" shape="circle" icon="close" onClick={remove}/>
                 </div>
                 {(soundObj) ? renderSound(soundObj, keyword) : ""}
+                <LoadingState />
+                
             </div>
         );
     }

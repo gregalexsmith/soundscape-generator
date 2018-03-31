@@ -5,7 +5,7 @@ import {
 } from './action-types';
 
 const defaultState = {
-    keywords: [],
+    keywords: ["testing", "ship", "boat"],
     soundResults: {}
 }
 

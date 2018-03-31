@@ -15,7 +15,7 @@ class AudioPlayer extends Component {
                 y: 0.5,
                 z: 0.5
             },
-            gain: 1
+            gain: 1,
         }
         this.togglePlay = this.togglePlay.bind(this);
         this.updateSourcePosition = this.updateSourcePosition.bind(this);
@@ -24,24 +24,19 @@ class AudioPlayer extends Component {
     }
 
     setupAudioElement() {
-        const { keyword, stopSound} = this.props; 
+        const { keyword, stopSound} = this.props;
+        const {audioElement} = this.state
         const sound = this.props.sounds[keyword].sound;
         const newSource = sound.previews["preview-hq-mp3"];
-        if (!this.audioElement || this.audioElement.src !== newSource) {
-            // Create an AudioElement.
-            this.audioElement = document.createElement('audio');
-            this.audioElement.crossOrigin = "anonymous";
-            this.audioElement.src = newSource
-            this.audioElement.addEventListener("ended", () => {
-                stopSound(keyword);
-            });
-
-            this.source = webAudioUtil.createAudioSource(this.audioElement);
+        
+        if (!audioElement || audioElement.src !== newSource) {
+            const source = webAudioUtil.createAudioSource(keyword, newSource);
         }
 
     }
 
     componentDidMount() {
+        console.log("audio did mount");
         const { keyword, shouldPlay, playSound} = this.props; 
         this.setupAudioElement();
         if (shouldPlay) {
@@ -51,27 +46,24 @@ class AudioPlayer extends Component {
     }
 
     componentWillUnMount() {
-        console.log("component will unmount")
-        //TODO: dispose audio element + resonance audio source
-        this.audioElement.pause();
-        this.audioElement.currentTime = 0;
+        console.log("audio component will unmount")
     }
 
     componentDidUpdate() {
-        const { keyword, sourcePosition, gain } = this.state;
-        const {isPlaying} = this.props.sounds[keyword];
-
+        const { keyword, sourcePosition, gain, audioElement, source} = this.state;
+        const { isPlaying } = this.props.sounds[keyword];
+        if (!audioElement) return;
         //play/pause
         if (isPlaying) {
-            this.audioElement.play();
+            webAudioUtil.playAudio(keyword);
         } else {
-            this.audioElement.pause();
-            this.audioElement.currentTime = 0;
+            audioElement.pause();
+            audioElement.currentTime = 0;
         }
 
         // resonance
-        this.source.setPosition(sourcePosition.x, sourcePosition.y, sourcePosition.z);
-        this.source.setGain(gain);
+        source.setPosition(sourcePosition.x, sourcePosition.y, sourcePosition.z);
+        source.setGain(gain);
 
         // audio source
         // this.audioElement.crossOrigin = "anonymous";
@@ -114,11 +106,13 @@ class AudioPlayer extends Component {
     }
 
     render() {
-        const { sourcePosition, keyword} = this.state;
+        const { sourcePosition, keyword, key} = this.state;
+        console.log("render", keyword)
         const { isPlaying } = this.props.sounds[keyword];
         const { name } = this.props;
+
         return (
-            <div className="audio-player">
+            <div className="audio-player" key={key}>
                 <button onClick={this.togglePlay} className="play-button">
                     {(isPlaying) ? <Icon type="pause-circle" /> : <Icon type="play-circle" />}
                 </button>

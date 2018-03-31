@@ -1,0 +1,3 @@
+
+- Attempting to fix the bug where you remove a sound, but the audio keeps playing
+    - need to know when the React component unmounts.. or approach it a different way
